@@ -1,0 +1,836 @@
+{% extends "base.html" %}
+
+{% block title %}My Interviews | JobTrack{% endblock %}
+
+{% block content %}
+
+<style>
+    .interview-page {
+        padding-top: 12px;
+        padding-bottom: 40px;
+    }
+
+    /* Header */
+    .interview-header {
+        background: linear-gradient(135deg, #ffffff, #f1f5ff);
+        border: 1px solid #e8edf5;
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 25px;
+    }
+
+    .interview-header h1 {
+        color: #172554;
+        letter-spacing: -0.7px;
+    }
+
+    .interview-header p {
+        color: #64748b;
+    }
+
+    .header-icon {
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e8efff;
+        color: #3157c8;
+        border-radius: 15px;
+        font-size: 25px;
+        flex-shrink: 0;
+    }
+
+    /* Filter section */
+    .filter-section {
+        background: #ffffff;
+        border: 1px solid #e9edf5;
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+    }
+
+    .filter-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border: 1px solid #e5eaf2;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #475569;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background: #ffffff;
+    }
+
+    .filter-card:hover {
+        transform: translateY(-2px);
+        border-color: #b8c8f5;
+        background: #f8faff;
+        color: #3157c8;
+    }
+
+    .filter-card.active {
+        background: #3157c8;
+        color: #ffffff;
+        border-color: #3157c8;
+        box-shadow: 0 4px 12px rgba(49, 87, 200, 0.2);
+    }
+
+    .filter-card.active-success {
+        background: #198754;
+        color: #ffffff;
+        border-color: #198754;
+    }
+
+    .filter-card.active-danger {
+        background: #dc3545;
+        color: #ffffff;
+        border-color: #dc3545;
+    }
+
+    .filter-count {
+        min-width: 25px;
+        height: 25px;
+        padding: 0 7px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        background: #eef2f8;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .filter-card.active .filter-count,
+    .filter-card.active-success .filter-count,
+    .filter-card.active-danger .filter-count {
+        background: rgba(255, 255, 255, 0.22);
+        color: #ffffff;
+    }
+
+    /* Interview table */
+    .interview-table-card {
+        background: #ffffff;
+        border: 1px solid #e9edf5;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .interview-table-card .card-header {
+        background: #ffffff;
+        border-bottom: 1px solid #edf0f5;
+        padding: 20px 23px;
+    }
+
+    .interview-table {
+        margin-bottom: 0;
+    }
+
+    .interview-table thead th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px;
+        border-bottom: 1px solid #e9edf5;
+        white-space: nowrap;
+    }
+
+    .interview-table tbody td {
+        padding: 17px 16px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f2f6;
+        color: #475569;
+        font-size: 14px;
+    }
+
+    .interview-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .interview-table tbody tr:hover {
+        background: #f8faff;
+    }
+
+    .company-avatar {
+        width: 39px;
+        height: 39px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 11px;
+        background: #eaf0ff;
+        color: #3157c8;
+        font-weight: 800;
+        font-size: 15px;
+        flex-shrink: 0;
+        text-transform: uppercase;
+    }
+
+    .company-name {
+        color: #1e293b;
+        font-weight: 700;
+    }
+
+    .job-title {
+        color: #475569;
+        font-weight: 600;
+    }
+
+    .interview-type {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 7px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .date-text {
+        color: #1e293b;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .time-text {
+        display: block;
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-scheduled {
+        background: #eaf0ff;
+        color: #3157c8;
+    }
+
+    .status-completed {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .status-cancelled {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    /* Action buttons */
+    .action-btn {
+        width: 33px;
+        height: 33px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 14px;
+    }
+
+    .action-edit {
+        background: #eaf0ff;
+        color: #3157c8;
+    }
+
+    .action-edit:hover {
+        background: #3157c8;
+        color: #ffffff;
+    }
+
+    .action-join {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .action-join:hover {
+        background: #198754;
+        color: #ffffff;
+    }
+
+    .action-delete {
+        background: #fee2e2;
+        color: #dc3545;
+    }
+
+    .action-delete:hover {
+        background: #dc3545;
+        color: #ffffff;
+    }
+
+    /* Empty state */
+    .empty-state {
+        background: #ffffff;
+        border: 1px solid #e9edf5;
+        border-radius: 16px;
+        padding: 65px 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+    }
+
+    .empty-icon {
+        width: 85px;
+        height: 85px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        background: #eef2ff;
+        color: #3157c8;
+        border-radius: 24px;
+        font-size: 38px;
+    }
+
+    .empty-state h2 {
+        color: #1e293b;
+    }
+
+    .empty-state p {
+        color: #94a3b8;
+        max-width: 420px;
+        margin: 0 auto 24px;
+    }
+
+    @media (max-width: 768px) {
+        .interview-header {
+            padding: 20px;
+        }
+
+        .filter-section {
+            padding: 17px;
+        }
+
+        .filter-card {
+            flex: 1 1 calc(50% - 10px);
+            justify-content: space-between;
+        }
+
+        .interview-table thead th,
+        .interview-table tbody td {
+            padding: 13px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .filter-card,
+        .action-btn {
+            transition: none;
+        }
+
+        .filter-card:hover {
+            transform: none;
+        }
+    }
+</style>
+
+
+<div class="container interview-page">
+
+    <!-- PAGE HEADER -->
+    <div class="interview-header">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="header-icon">
+                    <i class="bi bi-calendar2-check"></i>
+                </div>
+
+                <div>
+                    <h1 class="h2 fw-bold mb-1">My Interviews</h1>
+
+                    <p class="mb-0">
+                        Manage and track all your scheduled and completed interviews.
+                    </p>
+                </div>
+
+            </div>
+
+            <a href="{% url 'applications:interview_create' %}"
+               class="btn btn-primary px-4 py-2 fw-semibold">
+
+                <i class="bi bi-plus-lg me-2"></i>
+                Schedule Interview
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTER SECTION -->
+    <div class="filter-section">
+
+        <div class="d-flex align-items-center gap-2 mb-3">
+
+            <i class="bi bi-funnel text-primary"></i>
+
+            <h6 class="fw-bold mb-0">Filter Interviews</h6>
+
+        </div>
+
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <!-- ALL -->
+            <a href="{% url 'applications:interview_list' %}?period=all"
+               class="filter-card {% if selected_period == 'all' %}active{% endif %}">
+
+                <span>
+                    <i class="bi bi-grid me-1"></i>
+                    All
+                </span>
+
+                <span class="filter-count">
+                    {{ interview_counts.all }}
+                </span>
+
+            </a>
+
+
+            <!-- TODAY -->
+            <a href="{% url 'applications:interview_list' %}?period=today"
+               class="filter-card {% if selected_period == 'today' %}active{% endif %}">
+
+                <span>
+                    <i class="bi bi-calendar-day me-1"></i>
+                    Today
+                </span>
+
+                <span class="filter-count">
+                    {{ interview_counts.today }}
+                </span>
+
+            </a>
+
+
+            <!-- UPCOMING -->
+            <a href="{% url 'applications:interview_list' %}?period=upcoming"
+               class="filter-card {% if selected_period == 'upcoming' %}active-success{% endif %}">
+
+                <span>
+                    <i class="bi bi-calendar-plus me-1"></i>
+                    Upcoming
+                </span>
+
+                <span class="filter-count">
+                    {{ interview_counts.upcoming }}
+                </span>
+
+            </a>
+
+
+            <!-- OVERDUE -->
+            <a href="{% url 'applications:interview_list' %}?period=overdue"
+               class="filter-card {% if selected_period == 'overdue' %}active-danger{% endif %}">
+
+                <span>
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    Overdue
+                </span>
+
+                <span class="filter-count">
+                    {{ interview_counts.overdue }}
+                </span>
+
+            </a>
+
+
+            <!-- COMPLETED -->
+            <a href="{% url 'applications:interview_list' %}?period=completed"
+               class="filter-card {% if selected_period == 'completed' %}active-success{% endif %}">
+
+                <span>
+                    <i class="bi bi-check-circle me-1"></i>
+                    Completed
+                </span>
+
+                <span class="filter-count">
+                    {{ interview_counts.completed }}
+                </span>
+
+            </a>
+
+
+            <!-- CANCELLED -->
+            <a href="{% url 'applications:interview_list' %}?period=cancelled"
+               class="filter-card {% if selected_period == 'cancelled' %}active{% endif %}">
+
+                <span>
+                    <i class="bi bi-x-circle me-1"></i>
+                    Cancelled
+                </span>
+
+                <span class="filter-count">
+                    {{ interview_counts.cancelled }}
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- INTERVIEW LIST -->
+    {% if interviews %}
+
+        <div class="interview-table-card">
+
+            <!-- TABLE HEADER -->
+            <div class="card-header">
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+
+                            {% if selected_period == "today" %}
+                                Today's Interviews
+
+                            {% elif selected_period == "upcoming" %}
+                                Upcoming Interviews
+
+                            {% elif selected_period == "overdue" %}
+                                Overdue Interviews
+
+                            {% elif selected_period == "completed" %}
+                                Completed Interviews
+
+                            {% elif selected_period == "cancelled" %}
+                                Cancelled Interviews
+
+                            {% else %}
+                                All Interviews
+
+                            {% endif %}
+
+                        </h5>
+
+                        <small class="text-muted">
+                            Your interview schedule and details
+                        </small>
+
+                    </div>
+
+                    <span class="badge rounded-pill text-bg-primary px-3 py-2">
+
+                        <i class="bi bi-calendar-check me-1"></i>
+
+                        {{ interviews|length }}
+                        Interview{{ interviews|length|pluralize }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- TABLE BODY -->
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle interview-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th class="ps-4">Company</th>
+
+                                <th>Job Title</th>
+
+                                <th>Interview Type</th>
+
+                                <th>Date & Time</th>
+
+                                <th>Status</th>
+
+                                <th class="text-center pe-4">Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for interview in interviews %}
+
+                                <tr>
+
+                                    <!-- COMPANY -->
+                                    <td class="ps-4">
+
+                                        <div class="d-flex align-items-center gap-3">
+
+                                            <div class="company-avatar">
+
+                                                {{ interview.application.company_name|first|upper }}
+
+                                            </div>
+
+                                            <span class="company-name">
+                                                {{ interview.application.company_name }}
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- JOB TITLE -->
+                                    <td>
+
+                                        <span class="job-title">
+                                            {{ interview.application.job_title }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- INTERVIEW TYPE -->
+                                    <td>
+
+                                        <span class="interview-type">
+
+                                            <i class="bi bi-people me-1"></i>
+
+                                            {{ interview.get_interview_type_display }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- DATE AND TIME -->
+                                    <td>
+
+                                        <span class="date-text">
+
+                                            <i class="bi bi-calendar3 me-1 text-primary"></i>
+
+                                            {{ interview.scheduled_at|date:"d M Y" }}
+
+                                        </span>
+
+                                        <span class="time-text">
+
+                                            <i class="bi bi-clock me-1"></i>
+
+                                            {{ interview.scheduled_at|date:"h:i A" }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- STATUS -->
+                                    <td>
+
+                                        {% if interview.status == "SCHEDULED" %}
+
+                                            <span class="status-badge status-scheduled">
+
+                                                <i class="bi bi-clock-history"></i>
+                                                Scheduled
+
+                                            </span>
+
+                                        {% elif interview.status == "COMPLETED" %}
+
+                                            <span class="status-badge status-completed">
+
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                Completed
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="status-badge status-cancelled">
+
+                                                <i class="bi bi-x-circle-fill"></i>
+                                                Cancelled
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ACTIONS -->
+                                    <td class="pe-4">
+
+                                        <div class="d-flex justify-content-center gap-2">
+
+                                            <!-- EDIT -->
+                                            <a href="{% url 'applications:interview_update' interview.pk %}"
+                                               class="action-btn action-edit"
+                                               title="Edit Interview"
+                                               aria-label="Edit Interview">
+
+                                                <i class="bi bi-pencil-square"></i>
+
+                                            </a>
+
+
+                                            <!-- JOIN -->
+                                            {% if interview.meeting_link %}
+
+                                                <a href="{{ interview.meeting_link }}"
+                                                   target="_blank"
+                                                   rel="noopener noreferrer"
+                                                   class="action-btn action-join"
+                                                   title="Join Meeting"
+                                                   aria-label="Join Meeting">
+
+                                                    <i class="bi bi-camera-video-fill"></i>
+
+                                                </a>
+
+                                            {% endif %}
+
+
+                                            <!-- DELETE -->
+                                            <a href="{% url 'applications:interview_delete' interview.pk %}"
+                                               class="action-btn action-delete"
+                                               title="Delete Interview"
+                                               aria-label="Delete Interview">
+
+                                                <i class="bi bi-trash3"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-calendar2-x"></i>
+
+            </div>
+
+
+            <h2 class="h4 fw-bold">
+
+                {% if selected_period == "today" %}
+
+                    No interviews today.
+
+                {% elif selected_period == "upcoming" %}
+
+                    No upcoming interviews.
+
+                {% elif selected_period == "overdue" %}
+
+                    No overdue interviews.
+
+                {% elif selected_period == "completed" %}
+
+                    No completed interviews yet.
+
+                {% elif selected_period == "cancelled" %}
+
+                    No cancelled interviews.
+
+                {% else %}
+
+                    No interviews scheduled yet.
+
+                {% endif %}
+
+            </h2>
+
+
+            <p>
+
+                {% if selected_period == "all" %}
+
+                    Schedule your first interview to start tracking your interview progress.
+
+                {% else %}
+
+                    There are no interviews available in this category. Try selecting another filter.
+
+                {% endif %}
+
+            </p>
+
+
+            {% if selected_period == "all" %}
+
+                <a href="{% url 'applications:interview_create' %}"
+                   class="btn btn-primary px-4 py-2 fw-semibold">
+
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Schedule Your First Interview
+
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'applications:interview_list' %}?period=all"
+                   class="btn btn-outline-primary px-4 py-2 fw-semibold">
+
+                    <i class="bi bi-grid me-2"></i>
+                    View All Interviews
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+ .env.example                                       |   12 [32m+[m
+ .gitignore                                         |   31 [32m+[m
+ applications/__init__.py                           |    0
+ applications/admin.py                              |   27 [32m+[m
+ applications/apps.py                               |    6 [32m+[m
+ applications/forms.py                              |  164 [32m+++[m
+ applications/migrations/0001_initial.py            |   39 [32m+[m
+ applications/migrations/0002_interview.py          |   32 [32m+[m
+ applications/migrations/__init__.py                |    0
+ applications/models.py                             |  145 [32m+++[m
+ applications/tests.py                              |    3 [32m+[m
+ applications/urls.py                               |   58 [32m+[m
+ applications/views.py                              |  571 [32m++++++++++[m
+ config/__init__.py                                 |    0
+ config/asgi.py                                     |   16 [32m+[m
+ config/settings.py                                 |  195 [32m++++[m
+ config/urls.py                                     |   36 [32m+[m
+ config/wsgi.py                                     |   16 [32m+[m
+ core/__init__.py                                   |    0
+ core/admin.py                                      |    3 [32m+[m
+ core/apps.py                                       |    6 [32m+[m
+ core/forms.py                                      |  170 [32m+++[m
+ core/migrations/0001_initial.py                    |   32 [32m+[m
+ core/migrations/0002_profile.py                    |   25 [32m+[m
+ core/migrations/__init__.py                        |    0
+ core/models.py                                     |   53 [32m+[m
+ core/tests.py                                      |    3 [32m+[m
+ core/urls.py                                       |   79 [32m++[m
+ core/views.py                                      |  357 [32m++++++[m
+ manage.py                                          |   22 [32m+[m
+ requirements.txt                                   |   11 [32m+[m
+ static/css/style.css                               |  219 [32m++++[m
+ .../applications/application_confirm_delete.html   |   60 [32m+[m
+ templates/applications/application_detail.html     |  817 [32m++++++++++++++[m
+ templates/applications/application_form.html       |   90 [32m++[m
+ templates/applications/application_list.html       |  658 [32m+++++++++++[m
+ templates/applications/dashboard.html              | 1146 [32m++++++++++++++++++++[m
+ .../applications/interview_confirm_delete.html     |  306 [32m++++++[m
+ templates/applications/interview_form.html         |  356 [32m++++++[m
+ templates/applications/interview_list.html         |  836 [32m++++++++++++++[m
+ templates/base.html                                |  176 [32m+++[m
+ templates/core/home.html                           |  886 [32m+++++++++++++++[m
+ templates/registration/edit_profile.html           |  334 [32m++++++[m
+ templates/registration/login.html                  |  419 [32m+++++++[m
+ templates/registration/password_change_done.html   |  120 [32m++[m
+ templates/registration/password_change_form.html   |  283 [32m+++++[m
+ .../registration/password_reset_complete.html      |   21 [32m+[m
+ templates/registration/password_reset_confirm.html |   52 [32m+[m
+ templates/registration/password_reset_done.html    |   28 [32m+[m
+ templates/registration/password_reset_email.html   |   12 [32m+[m
+ templates/registration/password_reset_form.html    |   84 [32m++[m
+ .../registration/password_reset_new_password.html  |   80 [32m++[m
+ templates/registration/password_reset_subject.txt  |    1 [32m+[m
+ templates/registration/password_reset_verify.html  |   75 [32m++[m
+ templates/registration/profile.html                |  335 [32m++++++[m
+ templates/registration/register.html               |  436 [32m++++++++[m
+ 56 files changed, 9942 insertions(+)

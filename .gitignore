@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Allow a safe example configuration to be committed
+!.env.example
+
+# Local databases
+db.sqlite3
+
+# User-uploaded files
+media/
+
+# Collected static files
+staticfiles/
+
+# Test and coverage files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local editor settings
+.vscode/

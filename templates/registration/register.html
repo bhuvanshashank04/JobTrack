@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account | JobTrack{% endblock %}
+
+{% block content %}
+
+<style>
+    .register-page {
+        min-height: 75vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 25px;
+        padding-bottom: 40px;
+    }
+
+    .register-card {
+        background: #ffffff;
+        border: 1px solid #e9edf5;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    .register-header {
+        background: linear-gradient(135deg, #3157c8, #5478e8);
+        padding: 30px 25px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .register-logo {
+        width: 65px;
+        height: 65px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.18);
+        font-size: 30px;
+    }
+
+    .register-header h1 {
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .register-header p {
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+
+    .register-body {
+        padding: 30px;
+    }
+
+    .register-label {
+        color: #334155;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .register-input,
+    .register-body input:not([type="checkbox"]):not([type="radio"]),
+    .register-body select,
+    .register-body textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #dce2ec;
+        border-radius: 9px;
+        font-size: 14px;
+        color: #334155;
+        transition: all 0.2s ease;
+    }
+
+    .register-input:focus,
+    .register-body input:focus,
+    .register-body select:focus,
+    .register-body textarea:focus {
+        outline: none;
+        border-color: #3157c8;
+        box-shadow: 0 0 0 3px rgba(49, 87, 200, 0.12);
+    }
+
+    .register-body .helptext,
+    .register-body .form-text {
+        display: block;
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .register-body ul {
+        color: #64748b;
+        font-size: 12px;
+        padding-left: 20px;
+        margin-top: 7px;
+    }
+
+    .register-body .errorlist {
+        color: #dc3545;
+        font-size: 13px;
+        padding-left: 18px;
+        margin-top: 7px;
+    }
+
+    .register-password-wrapper {
+        position: relative;
+    }
+
+    .register-password-wrapper input {
+        padding-right: 45px !important;
+    }
+
+    .password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 13px;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        font-size: 17px;
+    }
+
+    .password-toggle:hover {
+        color: #3157c8;
+    }
+
+    .register-btn {
+        padding: 12px;
+        border-radius: 9px;
+        font-weight: 700;
+        font-size: 15px;
+        background: #3157c8;
+        border-color: #3157c8;
+        transition: all 0.2s ease;
+    }
+
+    .register-btn:hover {
+        background: #2445a9;
+        border-color: #2445a9;
+        transform: translateY(-1px);
+    }
+
+    .register-footer {
+        border-top: 1px solid #edf0f5;
+        padding-top: 22px;
+        margin-top: 25px;
+        text-align: center;
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .register-footer a {
+        color: #3157c8;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .register-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .register-info {
+        background: #f0f5ff;
+        border: 1px solid #dce7ff;
+        border-radius: 10px;
+        padding: 13px;
+        color: #475569;
+        font-size: 12px;
+    }
+
+    @media (max-width: 576px) {
+        .register-body {
+            padding: 22px 20px;
+        }
+
+        .register-header {
+            padding: 25px 20px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .register-btn,
+        .register-input {
+            transition: none;
+        }
+    }
+</style>
+
+
+<div class="container register-page">
+
+    <div class="row justify-content-center w-100">
+
+        <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+            <div class="register-card">
+
+                <!-- HEADER -->
+                <div class="register-header">
+
+                    <div class="register-logo">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+
+                    <h1 class="h3 mb-2">
+                        Create Your Account
+                    </h1>
+
+                    <p>
+                        Start organizing your job applications and interviews.
+                    </p>
+
+                </div>
+
+
+                <!-- REGISTRATION FORM -->
+                <div class="register-body">
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger rounded-3">
+
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        {% for field in form %}
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="{{ field.id_for_label }}"
+                                    class="form-label register-label"
+                                >
+
+                                    {{ field.label }}
+
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+
+                                {% if field.name == "password1" or field.name == "password2" %}
+
+                                    <div class="register-password-wrapper">
+
+                                        <input
+                                            type="password"
+                                            name="{{ field.html_name }}"
+                                            id="{{ field.id_for_label }}"
+                                            class="register-input"
+                                            {% if field.field.required %}required{% endif %}
+                                            autocomplete="{% if field.name == 'password1' %}new-password{% else %}new-password{% endif %}"
+                                        >
+
+                                        <button
+                                            type="button"
+                                            class="password-toggle"
+                                            data-password-target="{{ field.id_for_label }}"
+                                            aria-label="Show password"
+                                            aria-pressed="false"
+                                        >
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                {% else %}
+
+                                    {{ field }}
+
+                                {% endif %}
+
+
+                                {% if field.help_text %}
+
+                                    <div class="form-text">
+
+                                        {{ field.help_text|safe }}
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% for error in field.errors %}
+
+                                    <div class="text-danger small mt-1">
+
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+
+                                        {{ error }}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endfor %}
+
+
+                        <!-- INFORMATION -->
+                        <div class="register-info mb-4">
+
+                            <i class="bi bi-shield-check text-primary me-2"></i>
+
+                            Your account information is used to manage your personal job application tracker.
+
+                        </div>
+
+
+                        <!-- REGISTER BUTTON -->
+                        <button
+                            type="submit"
+                            class="btn btn-primary register-btn w-100"
+                        >
+
+                            <i class="bi bi-person-check-fill me-2"></i>
+
+                            Create My Account
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- FOOTER -->
+                    <div class="register-footer">
+
+                        <p class="mb-0">
+
+                            Already have an account?
+
+                            <a href="{% url 'login' %}">
+                                Login
+                            </a>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOTTOM NOTE -->
+            <div class="text-center mt-3">
+
+                <small class="text-muted">
+
+                    <i class="bi bi-briefcase me-1"></i>
+
+                    Your career journey, organized in one place.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SHOW / HIDE PASSWORD -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const toggleButtons = document.querySelectorAll(
+            ".password-toggle"
+        );
+
+        toggleButtons.forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                const targetId = button.getAttribute(
+                    "data-password-target"
+                );
+
+                const passwordInput = document.getElementById(targetId);
+
+                const icon = button.querySelector("i");
+
+                if (!passwordInput || !icon) {
+                    return;
+                }
+
+                const isPassword = passwordInput.type === "password";
+
+                passwordInput.type = isPassword ? "text" : "password";
+
+                icon.classList.toggle("bi-eye", !isPassword);
+                icon.classList.toggle("bi-eye-slash", isPassword);
+
+                button.setAttribute(
+                    "aria-label",
+                    isPassword ? "Hide password" : "Show password"
+                );
+
+                button.setAttribute(
+                    "aria-pressed",
+                    isPassword ? "true" : "false"
+                );
+
+            });
+
+        });
+
+    });
+</script>
+
+{% endblock %}

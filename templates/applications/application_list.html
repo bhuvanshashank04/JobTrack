@@ -1,0 +1,658 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications | JobTrack{% endblock %}
+
+{% block content %}
+
+<style>
+    .applications-header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: white;
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+    }
+
+    .applications-header p {
+        color: rgba(255,255,255,0.8);
+    }
+
+    .application-card {
+        border: none;
+        border-radius: 14px;
+    }
+
+    .application-stat {
+        border-radius: 14px;
+        border: none;
+        transition: transform 0.2s ease;
+    }
+
+    .application-stat:hover {
+        transform: translateY(-4px);
+    }
+
+    .application-stat-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 22px;
+    }
+
+    .filter-card {
+        border: none;
+        border-radius: 14px;
+    }
+
+    .applications-table th {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
+    }
+
+    .applications-table td {
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+
+    .company-avatar {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 700;
+        font-size: 17px;
+    }
+
+    .application-actions .btn {
+        white-space: nowrap;
+    }
+
+    @media (max-width: 576px) {
+        .applications-header {
+            padding: 22px;
+        }
+
+        .applications-header h1 {
+            font-size: 25px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .application-stat {
+            transition: none;
+        }
+
+        .application-stat:hover {
+            transform: none;
+        }
+    }
+</style>
+
+
+<div class="container py-4">
+
+    <!-- Page Header -->
+    <div class="applications-header d-flex flex-wrap
+                justify-content-between align-items-center gap-3">
+
+        <div>
+            <h1 class="fw-bold mb-2">
+                <i class="bi bi-briefcase me-2"></i>
+                My Applications
+            </h1>
+
+            <p class="mb-0">
+                Manage, organize, and track your job search journey.
+            </p>
+        </div>
+
+        <a href="{% url 'applications:application_create' %}"
+           class="btn btn-light fw-semibold">
+
+            <i class="bi bi-plus-circle me-1"></i>
+            Add Application
+
+        </a>
+
+    </div>
+
+
+    <!-- Application Statistics -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6">
+
+            <div class="card application-stat shadow-sm h-100">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <p class="text-muted fw-semibold mb-2">
+                                TOTAL APPLICATIONS
+                            </p>
+
+                            <h2 class="fw-bold mb-1">
+                                {{ total_applications }}
+                            </h2>
+
+                            <small class="text-muted">
+                                Matching your current search and filters
+                            </small>
+                        </div>
+
+                        <div class="application-stat-icon
+                                    bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-folder2-open"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <div class="card application-stat shadow-sm h-100">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center">
+
+                        <div>
+                            <p class="text-muted fw-semibold mb-2">
+                                CURRENT VIEW
+                            </p>
+
+                            <h5 class="fw-bold mb-1">
+                                {% if selected_status %}
+                                    {{ selected_status }}
+                                {% else %}
+                                    All Applications
+                                {% endif %}
+                            </h5>
+
+                            <small class="text-muted">
+                                {% if search_query %}
+                                    Search: {{ search_query }}
+                                {% else %}
+                                    Your application overview
+                                {% endif %}
+                            </small>
+                        </div>
+
+                        <div class="application-stat-icon
+                                    bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-funnel"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Search and Filters -->
+    <div class="card filter-card shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+
+                <i class="bi bi-search text-primary fs-5"></i>
+
+                <h5 class="fw-bold mb-0">
+                    Search and Filter Applications
+                </h5>
+
+            </div>
+
+            <form method="get"
+                  action="{% url 'applications:application_list' %}">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-6">
+
+                        <label for="search" class="form-label fw-semibold">
+                            Search Applications
+                        </label>
+
+                        <input
+                            type="search"
+                            name="q"
+                            id="search"
+                            class="form-control"
+                            placeholder="Company, job title, or location"
+                            value="{{ search_query }}"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label for="status" class="form-label fw-semibold">
+                            Application Status
+                        </label>
+
+                        <select name="status"
+                                id="status"
+                                class="form-select">
+
+                            <option value="">All statuses</option>
+
+                            {% for value, label in status_choices %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if selected_status == value %}selected{% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-2 d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary flex-grow-1">
+
+                            <i class="bi bi-search me-1"></i>
+                            Search
+
+                        </button>
+
+                        <a href="{% url 'applications:application_list' %}"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Applications Table -->
+    <div class="card application-card shadow-sm">
+
+        <div class="card-header bg-white p-4">
+
+            <div class="d-flex justify-content-between
+                        align-items-center flex-wrap gap-2">
+
+                <div>
+                    <h5 class="fw-bold mb-1">
+                        <i class="bi bi-list-ul text-primary me-2"></i>
+                        Application Records
+                    </h5>
+
+                    <p class="text-muted small mb-0">
+                        Your job applications and their current progress.
+                    </p>
+                </div>
+
+                <span class="badge rounded-pill text-bg-primary px-3 py-2">
+                    {{ total_applications }} Applications
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if applications %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle
+                                  applications-table mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th class="px-4 py-3">Company</th>
+                                <th class="py-3">Job Title</th>
+                                <th class="py-3">Location</th>
+                                <th class="py-3">Applied Date</th>
+                                <th class="py-3">Status</th>
+                                <th class="py-3">Actions</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for application in applications %}
+
+                                <tr>
+
+                                    <!-- Company -->
+                                    <td class="px-4">
+
+                                        <div class="d-flex align-items-center gap-2">
+
+                                            <div class="company-avatar">
+                                                {{ application.company_name|first|upper }}
+                                            </div>
+
+                                            <div>
+                                                <span class="fw-semibold d-block">
+                                                    {{ application.company_name }}
+                                                </span>
+
+                                                <small class="text-muted">
+                                                    Job Application
+                                                </small>
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Job Title -->
+                                    <td>
+                                        <span class="fw-medium">
+                                            {{ application.job_title }}
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Location -->
+                                    <td>
+
+                                        <span class="text-muted">
+                                            <i class="bi bi-geo-alt me-1"></i>
+                                            {{ application.location|default:"—" }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Applied Date -->
+                                    <td class="text-nowrap">
+
+                                        {% if application.applied_date %}
+                                            <span class="text-muted">
+                                                <i class="bi bi-calendar3 me-1"></i>
+                                                {{ application.applied_date|date:"d M Y" }}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Application Status -->
+                                    <td>
+
+                                        {% if application.status == "OFFER_RECEIVED" %}
+
+                                            <span class="badge rounded-pill text-bg-success px-3 py-2">
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                {{ application.get_status_display }}
+                                            </span>
+
+                                        {% elif application.status == "INTERVIEW" %}
+
+                                            <span class="badge rounded-pill text-bg-primary px-3 py-2">
+                                                <i class="bi bi-people me-1"></i>
+                                                {{ application.get_status_display }}
+                                            </span>
+
+                                        {% elif application.status == "ASSESSMENT" %}
+
+                                            <span class="badge rounded-pill text-bg-warning px-3 py-2">
+                                                <i class="bi bi-clipboard-check me-1"></i>
+                                                {{ application.get_status_display }}
+                                            </span>
+
+                                        {% elif application.status == "APPLIED" %}
+
+                                            <span class="badge rounded-pill text-bg-info px-3 py-2">
+                                                <i class="bi bi-send me-1"></i>
+                                                {{ application.get_status_display }}
+                                            </span>
+
+                                        {% elif application.status == "REJECTED" %}
+
+                                            <span class="badge rounded-pill text-bg-danger px-3 py-2">
+                                                <i class="bi bi-x-circle me-1"></i>
+                                                {{ application.get_status_display }}
+                                            </span>
+
+                                        {% elif application.status == "WITHDRAWN" %}
+
+                                            <span class="badge rounded-pill text-bg-dark px-3 py-2">
+                                                <i class="bi bi-dash-circle me-1"></i>
+                                                {{ application.get_status_display }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge rounded-pill text-bg-secondary px-3 py-2">
+                                                <i class="bi bi-bookmark me-1"></i>
+                                                {{ application.get_status_display }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Actions -->
+                                    <td>
+
+                                        <div class="d-flex gap-2 application-actions">
+
+                                            <a
+                                                href="{% url 'applications:application_detail' application.pk %}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                title="View Application"
+                                            >
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+
+                                            <a
+                                                href="{% url 'applications:application_update' application.pk %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="Edit Application"
+                                            >
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+
+                                            <a
+                                                href="{% url 'applications:application_delete' application.pk %}"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Delete Application"
+                                            >
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+
+                    <div class="p-4 border-top">
+
+                        <nav aria-label="Application pagination">
+
+                            <ul class="pagination justify-content-center mb-0">
+
+                                {% if page_obj.has_previous %}
+
+                                    <li class="page-item">
+
+                                        <a
+                                            class="page-link"
+                                            href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.previous_page_number }}"
+                                        >
+                                            <i class="bi bi-chevron-left me-1"></i>
+                                            Previous
+                                        </a>
+
+                                    </li>
+
+                                {% else %}
+
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Previous</span>
+                                    </li>
+
+                                {% endif %}
+
+
+                                <li class="page-item active">
+                                    <span class="page-link">
+                                        Page {{ page_obj.number }}
+                                        of {{ page_obj.paginator.num_pages }}
+                                    </span>
+                                </li>
+
+
+                                {% if page_obj.has_next %}
+
+                                    <li class="page-item">
+
+                                        <a
+                                            class="page-link"
+                                            href="?q={{ search_query|urlencode }}&status={{ selected_status|urlencode }}&page={{ page_obj.next_page_number }}"
+                                        >
+                                            Next
+                                            <i class="bi bi-chevron-right ms-1"></i>
+                                        </a>
+
+                                    </li>
+
+                                {% else %}
+
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Next</span>
+                                    </li>
+
+                                {% endif %}
+
+                            </ul>
+
+                        </nav>
+
+                    </div>
+
+                {% endif %}
+
+
+            {% else %}
+
+                <!-- Empty State -->
+                <div class="text-center py-5 px-3">
+
+                    <i class="bi bi-folder2-open display-2
+                              text-muted opacity-50"></i>
+
+                    <h4 class="fw-bold mt-3">
+                        No Applications Found
+                    </h4>
+
+                    <p class="text-muted mb-4">
+
+                        {% if search_query or selected_status %}
+
+                            No applications match your current search.
+                            Try changing your search or filters.
+
+                        {% else %}
+
+                            Start tracking your job search by adding
+                            your first application.
+
+                        {% endif %}
+
+                    </p>
+
+
+                    {% if search_query or selected_status %}
+
+                        <a href="{% url 'applications:application_list' %}"
+                           class="btn btn-outline-secondary me-2">
+
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
+                            Clear Filters
+
+                        </a>
+
+                    {% endif %}
+
+
+                    <a href="{% url 'applications:application_create' %}"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Add Your First Application
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

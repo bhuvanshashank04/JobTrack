@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | JobTrack{% endblock %}
+
+{% block content %}
+
+<style>
+    .profile-page {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .profile-card {
+        background: #ffffff;
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        padding: 45px 20px 85px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .profile-picture-wrapper {
+        margin-top: -70px;
+        position: relative;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-picture {
+        width: 145px;
+        height: 145px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 6px solid #ffffff;
+        background: #f1f5f9;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .profile-placeholder {
+        width: 145px;
+        height: 145px;
+        border-radius: 50%;
+        border: 6px solid #ffffff;
+        background: #eef2ff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #4f46e5;
+        font-size: 55px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .profile-username {
+        font-size: 25px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 5px;
+    }
+
+    .profile-subtitle {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .profile-content {
+        padding: 30px 40px 35px;
+    }
+
+    .section-heading {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 22px;
+    }
+
+    .profile-info-card {
+        background: #f8fafc;
+        border: 1px solid #e9eef5;
+        border-radius: 12px;
+        padding: 16px 18px;
+        height: 100%;
+        transition: 0.2s ease;
+    }
+
+    .profile-info-card:hover {
+        border-color: #c7d7fe;
+        background: #f5f8ff;
+    }
+
+    .info-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 7px;
+    }
+
+    .info-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0;
+        word-break: break-word;
+    }
+
+    .info-icon {
+        color: #4f46e5;
+        font-size: 17px;
+        margin-right: 7px;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .profile-actions .btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .btn-edit-profile {
+        background: #2563eb;
+        color: #ffffff;
+        border: 1px solid #2563eb;
+    }
+
+    .btn-edit-profile:hover {
+        background: #1d4ed8;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .btn-change-password {
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+
+    .btn-change-password:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 576px) {
+        .profile-content {
+            padding: 25px 18px;
+        }
+
+        .profile-header {
+            padding: 35px 15px 80px;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .profile-username {
+            font-size: 22px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .profile-info-card,
+        .profile-actions .btn {
+            transition: none;
+        }
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="profile-page">
+
+        <div class="card profile-card">
+
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <h2 class="fw-bold mb-2">My Profile</h2>
+                <p class="mb-0 opacity-75">
+                    Manage your personal information and account settings
+                </p>
+            </div>
+
+            <!-- Profile Picture -->
+            <div class="profile-picture-wrapper">
+
+                {% if user_profile.profile_picture %}
+
+                    <img
+                        src="{{ user_profile.profile_picture.url }}"
+                        alt="Profile Picture"
+                        class="profile-picture"
+                    >
+
+                {% else %}
+
+                    <div class="profile-placeholder">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Username -->
+            <div class="text-center mb-4">
+                <h3 class="profile-username">
+                    {{ profile_user.get_full_name|default:profile_user.username }}
+                </h3>
+
+                <p class="profile-subtitle mb-0">
+                    <i class="bi bi-person-check me-1"></i>
+                    JobTrack Member
+                </p>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="profile-content">
+
+                <h5 class="section-heading">
+                    <i class="bi bi-person-lines-fill info-icon"></i>
+                    Personal Information
+                </h5>
+
+                <div class="row g-3">
+
+                    <!-- Username -->
+                    <div class="col-md-6">
+                        <div class="profile-info-card">
+
+                            <div class="info-label">
+                                <i class="bi bi-person info-icon"></i>
+                                Username
+                            </div>
+
+                            <p class="info-value">
+                                {{ profile_user.username }}
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                        <div class="profile-info-card">
+
+                            <div class="info-label">
+                                <i class="bi bi-person-badge info-icon"></i>
+                                First Name
+                            </div>
+
+                            <p class="info-value">
+                                {{ profile_user.first_name|default:"Not provided" }}
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                        <div class="profile-info-card">
+
+                            <div class="info-label">
+                                <i class="bi bi-person-vcard info-icon"></i>
+                                Last Name
+                            </div>
+
+                            <p class="info-value">
+                                {{ profile_user.last_name|default:"Not provided" }}
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <div class="profile-info-card">
+
+                            <div class="info-label">
+                                <i class="bi bi-envelope info-icon"></i>
+                                Email Address
+                            </div>
+
+                            <p class="info-value">
+                                {{ profile_user.email|default:"Not provided" }}
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Account Actions -->
+                <div class="profile-actions">
+
+                    <a href="{% url 'edit_profile' %}"
+                       class="btn btn-edit-profile">
+
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Profile
+
+                    </a>
+
+                    <a href="{% url 'password_change' %}"
+                       class="btn btn-change-password">
+
+                        <i class="bi bi-shield-lock me-2"></i>
+                        Change Password
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile | JobTrack{% endblock %}
+
+{% block content %}
+
+<style>
+    .edit-profile-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .edit-profile-card {
+        background: #ffffff;
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    .edit-profile-header {
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        padding: 35px 25px;
+        color: #ffffff;
+    }
+
+    .edit-profile-header h2 {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .edit-profile-header p {
+        margin-bottom: 0;
+        opacity: 0.85;
+        font-size: 14px;
+    }
+
+    .edit-profile-body {
+        padding: 35px 40px;
+    }
+
+    .form-section-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 22px;
+    }
+
+    .form-section-title i {
+        color: #4f46e5;
+        margin-right: 8px;
+    }
+
+    .edit-profile-body .form-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+
+    .edit-profile-body input:not([type="file"]) {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #dbe2ea;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #1e293b;
+        font-size: 14px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .edit-profile-body input:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
+
+    .profile-upload-box {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .profile-upload-box input[type="file"] {
+        width: 100%;
+        font-size: 13px;
+        color: #475569;
+    }
+
+    .profile-upload-box input[type="file"]::file-selector-button {
+        background: #eef2ff;
+        border: none;
+        border-radius: 7px;
+        padding: 9px 13px;
+        margin-right: 12px;
+        color: #4338ca;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .form-error {
+        color: #dc2626;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .form-actions .btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 9px;
+        font-weight: 600;
+    }
+
+    .btn-save-profile {
+        background: #2563eb;
+        color: #ffffff;
+        border: 1px solid #2563eb;
+    }
+
+    .btn-save-profile:hover {
+        background: #1d4ed8;
+        color: #ffffff;
+    }
+
+    .btn-cancel-profile {
+        background: #ffffff;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+
+    .btn-cancel-profile:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    @media (max-width: 576px) {
+        .edit-profile-body {
+            padding: 25px 20px;
+        }
+
+        .edit-profile-header {
+            padding: 28px 20px;
+        }
+
+        .edit-profile-header h2 {
+            font-size: 23px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .edit-profile-body input {
+            transition: none;
+        }
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="edit-profile-wrapper">
+
+        <div class="card edit-profile-card">
+
+            <!-- Header -->
+            <div class="edit-profile-header">
+
+                <h2>
+                    <i class="bi bi-person-gear me-2"></i>
+                    Edit Profile
+                </h2>
+
+                <p>
+                    Update your personal information and profile picture.
+                </p>
+
+            </div>
+
+            <!-- Form Body -->
+            <div class="edit-profile-body">
+
+                <form method="post" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    <!-- General Errors -->
+                    {% if user_form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ user_form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    {% if picture_form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ picture_form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Personal Information -->
+                    <h5 class="form-section-title">
+                        <i class="bi bi-person-lines-fill"></i>
+                        Personal Information
+                    </h5>
+
+                    <div class="row g-3">
+
+                        <!-- First Name -->
+                        <div class="col-md-6">
+
+                            <label class="form-label"
+                                   for="{{ user_form.first_name.id_for_label }}">
+                                First Name
+                            </label>
+
+                            {{ user_form.first_name }}
+
+                            {% for error in user_form.first_name.errors %}
+                                <div class="form-error">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="col-md-6">
+
+                            <label class="form-label"
+                                   for="{{ user_form.last_name.id_for_label }}">
+                                Last Name
+                            </label>
+
+                            {{ user_form.last_name }}
+
+                            {% for error in user_form.last_name.errors %}
+                                <div class="form-error">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-12">
+
+                            <label class="form-label"
+                                   for="{{ user_form.email.id_for_label }}">
+                                Email Address
+                            </label>
+
+                            {{ user_form.email }}
+
+                            {% for error in user_form.email.errors %}
+                                <div class="form-error">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Profile Picture -->
+                    <h5 class="form-section-title">
+                        <i class="bi bi-camera"></i>
+                        Profile Picture
+                    </h5>
+
+                    <div class="profile-upload-box">
+
+                        <label class="form-label"
+                               for="{{ picture_form.profile_picture.id_for_label }}">
+                            Upload a New Picture
+                        </label>
+
+                        {{ picture_form.profile_picture }}
+
+                        <div class="text-muted small mt-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Select an image file to update your profile picture.
+                        </div>
+
+                        {% for error in picture_form.profile_picture.errors %}
+                            <div class="form-error">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="form-actions">
+
+                        <button type="submit"
+                                class="btn btn-save-profile">
+
+                            <i class="bi bi-check-circle me-2"></i>
+                            Save Changes
+
+                        </button>
+
+                        <a href="{% url 'profile' %}"
+                           class="btn btn-cancel-profile">
+
+                            <i class="bi bi-x-circle me-2"></i>
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

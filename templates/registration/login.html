@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}Login | JobTrack{% endblock %}
+
+{% block content %}
+
+<style>
+    .login-page {
+        min-height: 75vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 25px;
+        padding-bottom: 35px;
+    }
+
+    .login-card {
+        background: #ffffff;
+        border: 1px solid #e9edf5;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+    }
+
+    .login-header {
+        background: linear-gradient(135deg, #3157c8, #5478e8);
+        padding: 32px 25px;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .login-logo {
+        width: 65px;
+        height: 65px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.18);
+        font-size: 30px;
+    }
+
+    .login-header h1 {
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .login-header p {
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+
+    .login-body {
+        padding: 32px;
+    }
+
+    .login-label {
+        color: #334155;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .login-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #dce2ec;
+        border-radius: 9px;
+        font-size: 14px;
+        color: #334155;
+        transition: all 0.2s ease;
+    }
+
+    .login-input:focus {
+        outline: none;
+        border-color: #3157c8;
+        box-shadow: 0 0 0 3px rgba(49, 87, 200, 0.12);
+    }
+
+    .password-wrapper {
+        position: relative;
+    }
+
+    .password-wrapper .login-input {
+        padding-right: 45px;
+    }
+
+    .password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 13px;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #64748b;
+        cursor: pointer;
+        font-size: 17px;
+    }
+
+    .password-toggle:hover {
+        color: #3157c8;
+    }
+
+    .login-btn {
+        padding: 12px;
+        border-radius: 9px;
+        font-weight: 700;
+        font-size: 15px;
+        background: #3157c8;
+        border-color: #3157c8;
+        transition: all 0.2s ease;
+    }
+
+    .login-btn:hover {
+        background: #2445a9;
+        border-color: #2445a9;
+        transform: translateY(-1px);
+    }
+
+    .forgot-link {
+        color: #3157c8;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .forgot-link:hover {
+        text-decoration: underline;
+    }
+
+    .login-footer {
+        border-top: 1px solid #edf0f5;
+        padding-top: 22px;
+        margin-top: 25px;
+        text-align: center;
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .login-footer a {
+        color: #3157c8;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 576px) {
+        .login-body {
+            padding: 24px 20px;
+        }
+
+        .login-header {
+            padding: 25px 20px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .login-btn,
+        .login-input {
+            transition: none;
+        }
+    }
+</style>
+
+
+<div class="container login-page">
+
+    <div class="row justify-content-center w-100">
+
+        <div class="col-sm-10 col-md-7 col-lg-5 col-xl-4">
+
+            <div class="login-card">
+
+                <!-- HEADER -->
+                <div class="login-header">
+
+                    <div class="login-logo">
+                        <i class="bi bi-briefcase-fill"></i>
+                    </div>
+
+                    <h1 class="h3 mb-2">
+                        Welcome Back!
+                    </h1>
+
+                    <p>
+                        Sign in to continue managing your career journey.
+                    </p>
+
+                </div>
+
+
+                <!-- LOGIN FORM -->
+                <div class="login-body">
+
+                    {% if form.errors %}
+
+                        <div class="alert alert-danger rounded-3 small">
+
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+                            Your username or password is incorrect.
+                            Please try again.
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if messages %}
+
+                        {% for message in messages %}
+
+                            <div class="alert alert-{{ message.tags|default:'info' }} rounded-3 small">
+
+                                {{ message }}
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+
+                        <!-- USERNAME -->
+                        <div class="mb-4">
+
+                            <label for="{{ form.username.id_for_label }}"
+                                   class="form-label login-label">
+
+                                Username
+
+                            </label>
+
+                            <div class="position-relative">
+
+                                <i class="bi bi-person position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+
+                                <input
+                                    type="text"
+                                    name="username"
+                                    id="{{ form.username.id_for_label }}"
+                                    class="login-input ps-5"
+                                    placeholder="Enter your username"
+                                    autocomplete="username"
+                                    value="{{ form.username.value|default:'' }}"
+                                    required
+                                    autofocus
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+                        <div class="mb-3">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <label for="{{ form.password.id_for_label }}"
+                                       class="form-label login-label">
+
+                                    Password
+
+                                </label>
+
+                                <a href="{% url 'password_reset' %}"
+                                   class="forgot-link">
+
+                                    Forgot Password?
+
+                                </a>
+
+                            </div>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="{{ form.password.id_for_label }}"
+                                    class="login-input"
+                                    placeholder="Enter your password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    id="togglePassword"
+                                    aria-label="Show password"
+                                    aria-pressed="false"
+                                >
+
+                                    <i class="bi bi-eye" id="passwordIcon"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NEXT URL -->
+                        {% if next %}
+
+                            <input
+                                type="hidden"
+                                name="next"
+                                value="{{ next }}"
+                            >
+
+                        {% endif %}
+
+
+                        <!-- LOGIN BUTTON -->
+                        <button
+                            type="submit"
+                            class="btn btn-primary login-btn w-100 mt-3"
+                        >
+
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                            Login to JobTrack
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- FOOTER -->
+                    <div class="login-footer">
+
+                        <p class="mb-0">
+
+                            Don't have an account?
+
+                            <a href="{% url 'register' %}">
+                                Create an account
+                            </a>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOTTOM NOTE -->
+            <div class="text-center mt-3">
+
+                <small class="text-muted">
+
+                    <i class="bi bi-shield-lock me-1"></i>
+
+                    Your career information stays protected.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SHOW / HIDE PASSWORD -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const toggleButton = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("id_password");
+        const passwordIcon = document.getElementById("passwordIcon");
+
+        if (toggleButton && passwordInput && passwordIcon) {
+
+            toggleButton.addEventListener("click", function () {
+
+                const isPassword = passwordInput.type === "password";
+
+                passwordInput.type = isPassword ? "text" : "password";
+
+                passwordIcon.classList.toggle("bi-eye", !isPassword);
+                passwordIcon.classList.toggle("bi-eye-slash", isPassword);
+
+                toggleButton.setAttribute(
+                    "aria-label",
+                    isPassword ? "Hide password" : "Show password"
+                );
+
+                toggleButton.setAttribute(
+                    "aria-pressed",
+                    isPassword ? "true" : "false"
+                );
+
+            });
+
+        }
+
+    });
+</script>
+
+{% endblock %}
